@@ -45,6 +45,9 @@ def home_page(request):
 
     return render(request, 'time_manage/main_page.html', context)
 
+
+def index(request):
+    return HttpResponse('<p>index page</p>')
 class CalendarView(generic.ListView):
     model = Event
     template_name = 'time_manage/calendar.html'
@@ -90,7 +93,8 @@ def event(request, event_id=None):
     if request.POST and form.is_valid():
         form.save()
         # return HttpResponseRedirect(reverse('cal:calendar'))
-        return HttpResponseRedirect(reverse('calendar'))
+        return HttpResponseRedirect(reverse('time_manage:calendar'))
+        # return redirect(reverse('calendar'))
     return render(request, 'time_manage/event.html', {'form': form})
 
 
@@ -118,11 +122,11 @@ def login_action(request):
                             password=form.cleaned_data['password'])
 
     login(request, new_user)
-    return redirect(reverse('home'))
+    return redirect(reverse('time_manage:home'))
 
 def logout_action(request):
     logout(request)
-    return redirect(reverse('login'))
+    return redirect(reverse('time_manage:login'))
 
 def register_action(request):
     context = {}
@@ -154,4 +158,4 @@ def register_action(request):
                             password=form.cleaned_data['password'])
 
     login(request, new_user)
-    return redirect(reverse('home'))
+    return redirect(reverse('time_manage:home'))
