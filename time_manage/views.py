@@ -35,23 +35,27 @@ from .models import *
 
 @login_required
 def home_page(request):
+    all_items = Event.objects.filter(user=request.user)
+    print (all_items)
+    # print (item)
+
     # try:
     #     newuser=Profile.objects.get(user=request.user)
     # except:
     #     newuser=Profile(user=request.user)
     #     newuser.save()
     context={}
-
+    context['msg']='hello world'
+    context['items']=all_items
 
     return render(request, 'time_manage/main_page.html', context)
 
-
 def index(request):
     return HttpResponse('<p>index page</p>')
+
 class CalendarView(generic.ListView):
     model = Event
     template_name = 'time_manage/calendar.html'
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         d = get_date(self.request.GET.get('month', None))
@@ -81,14 +85,15 @@ def next_month(d):
     next_month = last + timedelta(days=1)
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month
-
+@login_required
 def event(request, event_id=None):
-    instance = Event()
+    user=request.user
+    instance = Event(user=user)
     if event_id:
         instance = get_object_or_404(Event, pk=event_id)
     else:
-        instance = Event()
-
+        instance = Event(user=user)
+    print (instance)
     form = EventForm(request.POST or None, instance=instance)
     if request.POST and form.is_valid():
         form.save()
