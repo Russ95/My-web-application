@@ -1,0 +1,16 @@
+{% extends "time_manage/base.html" %}
+
+{% block user-info %}
+    <div>
+        <!-- {{user.first_name}} {{user.last_name}} <br>
+        username={{user.username}} <br> -->
+        <div class="dropdown">
+            <button class="dropbtn" id="id_logged_in_user_name">{{user.first_name}} {{user.last_name}} </button>
+            <div class="dropdown-content">
+
+              <a href="{% url 'logout' %}" style="text-align:left" id="id_nav_logout">Logout</a>
+            </div>
+          </div>
+    </div>
+
+{% endblock %}
