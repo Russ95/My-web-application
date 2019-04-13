@@ -22,10 +22,16 @@ class EventForm(ModelForm):
     fields = ( 'title', 'description','start_time', 'end_time')
 
   def __init__(self, *args, **kwargs):
+    print ('come here in forms')
+    print (kwargs)
+    # user = kwargs.pop('object_list')
+    # user = kwargs.pop('event_list')
     super(EventForm, self).__init__(*args, **kwargs)
     # input_formats parses HTML5 datetime-local input to datetime field
     self.fields['start_time'].input_formats = ('%Y-%m-%dT%H:%M',)
     self.fields['end_time'].input_formats = ('%Y-%m-%dT%H:%M',)
+    # self.fields['object_list'].queryset = Event.objects.filter(user=user)
+    # self.fields['event_list'].queryset = Event.objects.filter(user=user)
 
 
 

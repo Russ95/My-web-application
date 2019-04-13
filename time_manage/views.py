@@ -32,9 +32,15 @@ from .models import *
 # from .utils import Calendar
 # from .forms import EventForm
 
+global user_forclass
+
+def getuser(request):
+    return request.user
 
 @login_required
 def home_page(request):
+    global user_forclass
+    user_forclass=request.user
     all_items = Event.objects.filter(user=request.user)
     print (all_items)
     # print (item)
@@ -54,18 +60,41 @@ def index(request):
     return HttpResponse('<p>index page</p>')
 
 class CalendarView(generic.ListView):
+    # global user_forclass
+    # model = Event.objects.filter(user=CalendarView.get())
+    # print ('basic here')
     model = Event
+
+    # uu=get(request)
+
+    print ('model:::',model)
     template_name = 'time_manage/calendar.html'
+    # @method_decorator(login_required)
+    # def dispatch(self, *args, **kwargs):
+    #     return super(CalendarView, self).dispatch(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)  
+        print ('previous context',context)
+        context.update({
+        'object_list': Event.objects.filter(user=self.request.user),
+        'event_list': Event.objects.filter(user=self.request.user)
+    })    #useful but not affect followings
+        print ('mid-context',context)
         d = get_date(self.request.GET.get('month', None))
-        cal = Calendar(d.year, d.month)
+        cal = Calendar(d.year, d.month,self.request.user)  #it is here so we should pass request.user to utils
+        # context.fields['user'].queryset = Event.objects.filter(user=self.request.user)
         html_cal = cal.formatmonth(withyear=True)
         context['calendar'] = mark_safe(html_cal)
         context['prev_month'] = prev_month(d)
         context['next_month'] = next_month(d)
+        print ('will it be here')
+        print ('context',context)
         return context
-
+    # def get_form(self, model=None):
+    #     form = super().get_form(model)
+    #     form = Event.objects.filter(user=self.request.user)
+    #     return form
 
 def get_date(req_month):
     if req_month:
